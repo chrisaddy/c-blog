@@ -15,9 +15,14 @@ int main()
 	char buffer[BUFFER_SIZE];
 
 	char response[] = "HTTP/1.1 200 OK\r\n"
-		          "Content-Length: 85\r\n"
 		          "Content-type: text/html\r\n\r\n"
 		          "<html><body>"
+			  "<div class=\"navigation\">"
+			    "<ul>"
+			      "<li><a href=\"/blog\">Blog</a></li>"
+			      "<li><a href=\"/about\">About</a></li>"
+		            "</ul>"
+			  "</div>"
 			  "This is <strong>hyperprior</strong>, we'll be back soon"
 		          "</body></html>\r\n";
 
@@ -51,6 +56,7 @@ int main()
 
 	printf("server listening for connections\n");
 
+	// TODO: routing
 	while (1)
 	{
 		struct sockaddr_in client_addr;;
