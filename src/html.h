@@ -8,6 +8,9 @@
     "HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n" \
     __VA_ARGS__
 
+#define RESPONSE_METHOD_NOT_ALLOWED(...) \
+    "HTTP/1.1 405 Method Not Allowed\r\nContent-length: 0\r\nAllow: GET" \
+    __VA_ARGS__
 
 #define HTML(...) \
     "<!DOCTYPE html>" \

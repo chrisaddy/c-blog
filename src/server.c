@@ -8,106 +8,116 @@
 #include "html.h"
 #include <stdlib.h>
 #include "index.c"
+#include "errors.c"
 // #include "about.c"
-#define PORT 8080
+#define PORT 8094
 #define SOCKET_MAX_CONNS 128
 #define BUFFER_SIZE 1024
 
 
+int route(int fd, char* buffer) {
+	printf("routing:\n");
+	printf("%s", buffer);
+        int i = 0;
+        char *method, *path;
+
+        method = strtok(buffer, " ");
+        path = strtok(NULL, " ");
+
+        printf("method: %s\n", method);
+        printf("path: %s\n", path);
+
+        if (strcmp(method,"GET") != 0) {
+            return write(fd, get_method_not_allowed(), strlen(get_method_not_allowed()));
+        }
+
+	return write(fd, get_index_html(), strlen(get_index_html()));
+}
+
+
 int main() 
 {
-	char buffer[BUFFER_SIZE];
+    char buffer[BUFFER_SIZE];
+    int socket_fd = -1;
+    int client_fd = -1;
 
-	// char response[] = "HTTP/1.1 200 OK\r\n"
-	// 	          "Content-type: text/html\r\n\r\n"
-	// 	          "<html><body>"
-	// 		  "<div class=\"navigation\">"
-	// 		    "<ul>"
-	// 		      "<li><a href=\"/blog\">Blog</a></li>"
-	// 		      "<li><a href=\"/about\">About</a></li>"
-	// 	            "</ul>"
-	// 		  "</div>"
-	// 		  "This is <strong>hyperprior</strong>, we'll be back soon"
-	// 	          "</body></html>\r\n";
-	// //
-	// char response[] = HTML(
-	// 	HEAD(
-	// 	    TITLE("hyperprior")
-	// 	)
-	//     )
-	//
-	get_index_html();
+    socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_fd == -1) {
+        perror("socket");
+        return 1;
+    }
+    printf("socket created successfully\n");
 
-	int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (socket_fd == -1) {
-		perror("socket");
-		return 1;
-	}
-	printf("socket created successfully\n");
+    struct sockaddr_in host_addr;
+    int hostaddr_len = sizeof(host_addr);
 
-	struct sockaddr_in host_addr;
-	int hostaddr_len = sizeof(host_addr);
+    host_addr.sin_family = AF_INET;
+    host_addr.sin_port = htons(PORT);
+    host_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	host_addr.sin_family = AF_INET;
-	host_addr.sin_port = htons(PORT);
-	host_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(socket_fd, (struct sockaddr *)&host_addr, hostaddr_len) != 0)
+    {
+        perror("bind");
+        close(socket_fd);
+        return 1;
+    }
 
-	if (bind(socket_fd, (struct sockaddr *)&host_addr, hostaddr_len) != 0)
-	{
-		perror("bind");
-		return 1;
-	}
+    printf("socket bound to address\n");
 
-	printf("socket bound to address\n");
+    if (listen(socket_fd, SOCKET_MAX_CONNS) != 0)
+    {
+        perror("listen");
+        close(socket_fd);
+        return 1;
+    }
 
-	if (listen(socket_fd, SOCKET_MAX_CONNS) != 0)
-	{
-		perror("listen");
-		return 1;
-	}
+    printf("server listening for connections\n");
 
-	printf("server listening for connections\n");
+    while (1)
+    {
+        struct sockaddr_in client_addr;
+        socklen_t client_addr_len = sizeof(client_addr);
+        client_fd = accept(socket_fd, 
+                          (struct sockaddr *)&client_addr, 
+                          (socklen_t *)&client_addr_len);
+        if (client_fd < 0) 
+        {
+            perror("accept");
+            continue;
+        }
+        printf("connection accepted\n");
 
-	// TODO: routing
-	while (1)
-	{
-		struct sockaddr_in client_addr;;
-		socklen_t client_addr_len = sizeof(client_addr);
-		int client_fd = accept(socket_fd, 
-			                  (struct sockaddr *)&client_addr, 
-			                  (socklen_t *)&client_addr_len);
-		if (client_fd < 0) 
-		{
-			perror("accept");
-			continue;
-		}
-		printf("connection accepted\n");
+        ssize_t bytes_read = read(client_fd, buffer, BUFFER_SIZE - 1);
+        if (bytes_read < 0) 
+        {
+            perror("read");
+            close(client_fd);
+            continue;
+        }
+        if (bytes_read > 0)
+        {
+            buffer[bytes_read] = '\0';
+        }
 
+        ssize_t output = route(client_fd, buffer);
+        if (output < 0)
+        {
+            perror("write");
+            close(client_fd);
+            continue;
+        }
 
-		ssize_t bytes_read = read(client_fd, buffer, BUFFER_SIZE - 1);
-		if (bytes_read < 0) 
-		{
-			perror("read");
-			close(client_fd);
-			continue;
-		}
-		if (bytes_read > 0)
-		{
-			buffer[bytes_read] = '\0';
-			printf("received %s\n", buffer);
-		}
+        close(client_fd);
+        client_fd = -1;
+    }
 
-		ssize_t output = write(client_fd, get_index_html(), strlen(get_index_html()));
-		if (output < 0)
-		{
-			perror("write");
-			close(client_fd);
-			continue;
-		}
+    // Cleanup
+    if (client_fd != -1) {
+        close(client_fd);
+    }
+    if (socket_fd != -1) {
+        close(socket_fd);
+    }
 
-
-		close(client_fd);
-	}
-
-	return 0;
+    return 0;
 }
