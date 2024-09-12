@@ -1,5 +1,6 @@
 build:
-	gcc -Wall server.c -o server
+	cd src && \
+		gcc -Wall server.c -o ../server
 
 run:
 	./server

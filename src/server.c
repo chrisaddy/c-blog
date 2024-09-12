@@ -4,7 +4,11 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string.h>
+
+#include "html.h"
 #include <stdlib.h>
+#include "index.c"
+// #include "about.c"
 #define PORT 8080
 #define SOCKET_MAX_CONNS 128
 #define BUFFER_SIZE 1024
@@ -14,17 +18,25 @@ int main()
 {
 	char buffer[BUFFER_SIZE];
 
-	char response[] = "HTTP/1.1 200 OK\r\n"
-		          "Content-type: text/html\r\n\r\n"
-		          "<html><body>"
-			  "<div class=\"navigation\">"
-			    "<ul>"
-			      "<li><a href=\"/blog\">Blog</a></li>"
-			      "<li><a href=\"/about\">About</a></li>"
-		            "</ul>"
-			  "</div>"
-			  "This is <strong>hyperprior</strong>, we'll be back soon"
-		          "</body></html>\r\n";
+	// char response[] = "HTTP/1.1 200 OK\r\n"
+	// 	          "Content-type: text/html\r\n\r\n"
+	// 	          "<html><body>"
+	// 		  "<div class=\"navigation\">"
+	// 		    "<ul>"
+	// 		      "<li><a href=\"/blog\">Blog</a></li>"
+	// 		      "<li><a href=\"/about\">About</a></li>"
+	// 	            "</ul>"
+	// 		  "</div>"
+	// 		  "This is <strong>hyperprior</strong>, we'll be back soon"
+	// 	          "</body></html>\r\n";
+	// //
+	// char response[] = HTML(
+	// 	HEAD(
+	// 	    TITLE("hyperprior")
+	// 	)
+	//     )
+	//
+	get_index_html();
 
 	int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_fd == -1) {
@@ -85,7 +97,7 @@ int main()
 			printf("received %s\n", buffer);
 		}
 
-		ssize_t output = write(client_fd, response, strlen(response));
+		ssize_t output = write(client_fd, get_index_html(), strlen(get_index_html()));
 		if (output < 0)
 		{
 			perror("write");

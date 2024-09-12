@@ -2,7 +2,7 @@ FROM gcc:13.2.0-bookworm AS build
 
 WORKDIR /src
 
-COPY ./server.c /src/server.c
+COPY ./src/ /src/
 
 RUN set -xe; \
     gcc \
