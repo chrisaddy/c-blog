@@ -28,6 +28,8 @@
     __VA_ARGS__ \
     "</body>"
 
+#define NAVBAR(content) "<div class=\"naviation\"<ul><li><a href=\"/\">home</a></li><li><a href=\"about\">about</a></li></ul></div>"
+
 #define TITLE(content) "<title>" content "</title>"
 
 #define H1(content) "<h1>" content "</h1>"

@@ -8,9 +8,9 @@
 #include "html.h"
 #include <stdlib.h>
 #include "index.c"
+#include "about.c"
 #include "errors.c"
-// #include "about.c"
-#define PORT 8094
+#define PORT 8082
 #define SOCKET_MAX_CONNS 128
 #define BUFFER_SIZE 1024
 
@@ -27,11 +27,22 @@ int route(int fd, char* buffer) {
         printf("method: %s\n", method);
         printf("path: %s\n", path);
 
-        if (strcmp(method,"GET") != 0) {
+        if (strcmp(method,"GET") != 0)
+        {
             return write(fd, get_method_not_allowed(), strlen(get_method_not_allowed()));
         }
 
-	return write(fd, get_index_html(), strlen(get_index_html()));
+        if (strcmp(path, "/") == 0)
+        {
+            return write(fd, get_index_html(), strlen(get_index_html()));
+        }
+
+        if (strcmp(path, "/about") == 0)
+        {
+            return write(fd, get_about_html(), strlen(get_about_html()));
+        }
+
+        return -1;
 }
 
 
@@ -111,7 +122,6 @@ int main()
         client_fd = -1;
     }
 
-    // Cleanup
     if (client_fd != -1) {
         close(client_fd);
     }
