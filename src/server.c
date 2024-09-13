@@ -10,7 +10,7 @@
 #include "index.c"
 #include "about.c"
 #include "errors.c"
-#define PORT 8082
+#define PORT 8080
 #define SOCKET_MAX_CONNS 128
 #define BUFFER_SIZE 1024
 
