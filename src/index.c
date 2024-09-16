@@ -9,7 +9,7 @@
       BODY(\
         NAVBAR()\
         H1("hyperprior")\
-        P("we'll be right back")\
+        P("this site is part blog part evergreen notes")\
       )\
     )\
   )

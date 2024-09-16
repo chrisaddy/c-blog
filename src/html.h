@@ -20,15 +20,22 @@
 
 #define HEAD(...) \
     "<head>" \
+    "<script src=\"https://polyfill.io/v3/polyfill.min.js?features=es6\"></script>" \
+    "<script id=\"MathJax-script\" async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\"></script>"\
     __VA_ARGS__ \
     "</head>"
 
 #define BODY(...) \
-    "<body>" \
+    "<body style=\"width: 80%; margin: 0 auto;\">" \
     __VA_ARGS__ \
     "</body>"
 
-#define NAVBAR(content) "<div class=\"naviation\"<ul><li><a href=\"/\">home</a></li><li><a href=\"about\">about</a></li></ul></div>"
+#define NAVBAR(content) "<div class=\"naviation\"" \
+                        "<ul style=\"list-style-type: none; padding: 0; margin: 0; display: flex;\">" \
+                        "<li style=\"margin-right: 10px;\"><a style=\"font-size: 1.5em; text-decoration: none;\"; href=\"/\">home</a></li>" \
+                        "<li style=\"margin-right: 10px;\"><a style=\"font-size: 1.5em; text-decoration: none;\"; href=\"/about\">about</a></li>" \
+                        "<li style=\"margin-right: 10px;\"><a style=\"font-size: 1.5em; text-decoration: none;\"; href=\"/notes\">notes</a></li>" \
+                        "</ul></div>"
 
 #define TITLE(content) "<title>" content "</title>"
 

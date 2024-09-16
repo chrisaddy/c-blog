@@ -3,47 +3,12 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <string.h>
 
-#include "html.h"
-#include <stdlib.h>
-#include "index.c"
-#include "about.c"
-#include "errors.c"
+#include "router.c"
+
 #define PORT 8080
 #define SOCKET_MAX_CONNS 128
 #define BUFFER_SIZE 1024
-
-
-int route(int fd, char* buffer) {
-	printf("routing:\n");
-	printf("%s", buffer);
-        int i = 0;
-        char *method, *path;
-
-        method = strtok(buffer, " ");
-        path = strtok(NULL, " ");
-
-        printf("method: %s\n", method);
-        printf("path: %s\n", path);
-
-        if (strcmp(method,"GET") != 0)
-        {
-            return write(fd, get_method_not_allowed(), strlen(get_method_not_allowed()));
-        }
-
-        if (strcmp(path, "/") == 0)
-        {
-            return write(fd, get_index_html(), strlen(get_index_html()));
-        }
-
-        if (strcmp(path, "/about") == 0)
-        {
-            return write(fd, get_about_html(), strlen(get_about_html()));
-        }
-
-        return -1;
-}
 
 
 int main() 

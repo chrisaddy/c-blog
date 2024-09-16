@@ -8,8 +8,8 @@
       )\
       BODY(\
         NAVBAR()\
-        H1("about")\
-        P("this is the about page, if that wasn't obvious")\
+        H1("hyperprior")\
+        P("this site is written entirely in C")\
       )\
     )\
   )
