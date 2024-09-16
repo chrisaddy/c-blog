@@ -40,6 +40,8 @@
 #define TITLE(content) "<title>" content "</title>"
 
 #define H1(content) "<h1>" content "</h1>"
+#define H2(content) "<h2>" content "</h2>"
+#define H3(content) "<h3>" content "</h3>"
 
 #define P(content) "<p>" content "</p>"
 

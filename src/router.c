@@ -9,6 +9,7 @@
 #include "index.c"
 #include "about.c"
 #include "ml/router.c"
+#include "books.c"
 #include "notes.c"
 
 int notes_router(int fd, char* buffer, char* path) {
@@ -19,6 +20,11 @@ int notes_router(int fd, char* buffer, char* path) {
     {
         return notes_ml_router(fd, buffer, path);
     };
+
+    if (is_path(path, "/notes/books"))
+    {
+        return write(fd, get_books(), strlen(get_books()));
+    }
 
 
     if (is_path(path, "/notes"))

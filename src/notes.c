@@ -10,7 +10,8 @@
         NAVBAR()\
         H1("hyperprior")\
         P("notes, if you couldn't tell")\
-        A("/notes/ml", "ml")\
+        P(A("/notes/books", "books")) \
+        P(A("/notes/ml", "ml")) \
       )\
     )\
   )
